@@ -5,7 +5,6 @@ from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from .forms import TodoForm
 from .models import Todo
-from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -28,12 +27,12 @@ def signupuser(request):
         else:
             return render(request, "todo/signupuser.html", {"form": UserCreationForm(), 'error': 'passwords didnt match'})
 
-@login_required
+
 def currenttodos(request):
     todos = Todo.objects.filter(user=request.user)
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
-@login_required
+
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
@@ -52,7 +51,7 @@ def loginuser(request):
             login(request, user)
             return redirect('currenttodos')
 
-@login_required
+
 def createtodo(request):
     if request.method == 'GET':
         return render(request, "todo/createtodo.html", {'form': TodoForm()})
@@ -62,7 +61,7 @@ def createtodo(request):
         newtodo.user = request.user
         newtodo.save()
         return redirect('currenttodos')
-@login_required
+
 def viewtodo(request,todo_pk):
     todo=get_object_or_404(Todo,pk=todo_pk,user=request.user)
     if request.method=='GET':
@@ -72,7 +71,7 @@ def viewtodo(request,todo_pk):
         form = TodoForm(request.POST,instance=todo)
         form.save()
         return redirect('currenttodos')
-@login_required
+
 def deletetodo(request,todo_pk):
     todo=get_object_or_404(Todo,pk=todo_pk,user=request.user)
     if request.method=='POST':
